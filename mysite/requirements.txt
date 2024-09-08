@@ -1,0 +1,13 @@
+# Dev environment
+pip
+autopep8
+
+# App
+python-dotenv>=1.0.1
+asgiref>=3.7.2
+Django>=5.0
+sqlparse>=0.4.4
+typing_extensions>=4.9.0
+beautifulsoup4>=4.12.3
+requests>=2.32.3
+ 
