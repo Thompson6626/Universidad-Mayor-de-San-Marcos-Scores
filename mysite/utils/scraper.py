@@ -3,10 +3,9 @@ from bs4 import BeautifulSoup
 from people.models import Person
 
 def scrape_and_save(url):
-
     if Person.objects.filter(source_url = url).exists():
         return Person.objects.filter(source_url = url)
-
+    
     ADDED_LEN = len(".html")
     BASE_URL = url[:-ADDED_LEN]
     START_INDEX = len("./A")

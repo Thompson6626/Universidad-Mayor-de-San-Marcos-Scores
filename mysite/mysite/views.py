@@ -1,10 +1,13 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 
 from utils.scraper import scrape_and_save
 from django.views.decorators.csrf import csrf_exempt
 from people.models import Person
+
+import polars as pl
 
 HEADERS = [
     "Codigo",
@@ -16,14 +19,13 @@ HEADERS = [
     "Carrera Segunda Opción"
 ]
 
-ROWS_PER_PAGE = 15
-
+DEFAULT_ROWS_PER_PAGE = 15
 
 @csrf_exempt
 def home_page_view(request):
     if request.method == 'POST':
         url = request.POST.get('url', '')
-        return redirect(f'fetch?url={url}&page=1&show={ROWS_PER_PAGE}')
+        return redirect(f'fetch?url={url}')
 
     return HttpResponse(render(request, 'home.html'))
 
@@ -33,9 +35,9 @@ def table_data_view(request):
     
     if url:
         people = scrape_and_save(url)  
-
-        show = request.GET.get('show')
-        page_number = request.GET.get('page')  
+        
+        show = request.GET.get('show',DEFAULT_ROWS_PER_PAGE)
+        page_number = request.GET.get('page',1)  
 
         paginator = Paginator(people, show)  
 
@@ -48,3 +50,29 @@ def table_data_view(request):
             'url': url,
             'show': show
         })
+
+def fetch_data(request):
+    page = request.GET.get('page', 1)
+    show = request.GET.get('show', DEFAULT_ROWS_PER_PAGE)
+
+    sort_column = request.GET.get('sort', None)
+    sort_order = request.GET.get('order', 'asc')
+
+    people = Person.objects.all()
+
+    if sort_column:
+        if sort_order == 'desc':
+            sort_column = f'-{sort_column}'  
+        people = people.order_by(sort_column)
+
+
+    paginator = Paginator(people, show)
+    people_page = paginator.get_page(page)
+
+    table_html = render_to_string('table_content.html', {'people_page': people_page})
+    pagination_html = render_to_string('pagination_content.html', {'people_page': people_page})
+
+    return JsonResponse({
+        'table_html': table_html,
+        'pagination_html': pagination_html
+    })

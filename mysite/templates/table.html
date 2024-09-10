@@ -1,115 +1,43 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puntajes</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .pagination {
-            margin: 20px 0;
-            text-align: center;
-        }
-        .pagination a {
-            padding: 8px 16px;
-            margin: 0 4px;
-            border: 1px solid #ddd;
-            text-decoration: none;
-            color: #007bff;
-        }
-        .pagination a.active {
-            background-color: #007bff;
-            color: white;
-            border: 1px solid #007bff;
-        }
-        .pagination a.disabled {
-            color: #ddd;
-            border: 1px solid #ddd;
-            pointer-events: none;
-        }
-        .table-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .rows-form {
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'table/table.css' %}"> <!-- Link to external CSS -->
 </head>
 <body>
     <h1>Puntajes</h1>
-
-    <!-- Container for Table and Form -->
-    <div class="table-container">
-        <!-- Form to change 'show' (rows per page) -->
-        <form action="fetch" method="get" class="rows-form">
-            <input type="hidden" name="url" value="{{ url }}">
-            <input type="hidden" name="page" value="{{ people_page.number }}">
-            <label for="show">Rows per page: </label>
-            <input type="number" id="show" name="show" value="{{ show }}" min="1" required>
-            <button type="submit">Update</button>
-        </form>
-    </div>
-
+    {% for header in headers %}
+        <input type="checkbox" id="checkbox_{{ forloop.counter }}" name="checkbox_{{ header }}" checked>
+        <label for="checkbox_{{ forloop.counter }}"> {{ header }} </label><br>
+    {% endfor %}
     <table>
         <thead>
             <tr>
                 {% for header in headers %}
-                <th>{{ header }}</th>
+                <th>
+                    <a href="#" data-sort="{{ header|slugify }}">{{ header }}</a>
+                </th>
                 {% endfor %}
             </tr>
         </thead>
-        <tbody>
-            {% if people_page %}
-                {% for person in people_page %}
-                    <tr>
-                        <td>{{ person.codigo }}</td>
-                        <td>{{ person.apellidos_y_nombres }}</td>
-                        <td>{{ person.carrera_primera_opcion }}</td>
-                        <td>{{ person.puntaje }}</td>
-                        <td>{{ person.merito }}</td>
-                        <td>{{ person.observacion }}</td>
-                        <td>{{ person.carrera_segunda_opcion }}</td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="{{ HEADERS|length }}">No data available</td>
-                </tr>
-            {% endif %}
+        <tbody id="table-container">
+            {% include 'table_content.html' %}
         </tbody>
     </table>
+    
+    <form id="rows-form">
+        <label for="show">Rows per page: </label>
+        <input type="number" id="show" name="show" value="{{ show }}" min="1" required>
+        <button type="submit">Update</button>
+    </form>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        <span class="step-links">
-            {% if people_page.has_previous %}
-                <a href="fetch?url={{url}}&page=1&show={{show}}">&laquo; First</a>
-                <a href="fetch?url={{url}}&page={{people_page.previous_page_number}}&show={{show}}">Previous</a>
-            {% endif %}
-    
-            <span class="current">
-                Page {{ people_page.number }} of {{ people_page.paginator.num_pages }}.
-            </span>
-    
-            {% if people_page.has_next %}
-                <a href="fetch?url={{url}}&page={{people_page.next_page_number}}&show={{show}}">Next</a>
-                <a href="fetch?url={{url}}&page={{people_page.paginator.num_pages}}&show={{show}}">Last &raquo;</a>
-            {% endif %}
-        </span>
+    <div id="pagination-container">
+        {% include 'pagination_content.html' %}
     </div>
 
+    <script src="{% static 'table/table.js' %}"></script> <!-- Link to external JS -->
 </body>
 </html>
