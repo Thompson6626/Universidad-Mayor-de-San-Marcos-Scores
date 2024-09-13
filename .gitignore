@@ -2,6 +2,7 @@
 __pycache__
 DataScraping/.venv
 UNMSM_Scores/db.sqlite3
+.env
 .idx
 .vscode
 devserver.sh
