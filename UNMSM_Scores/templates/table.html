@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puntajes</title>
+    <link rel="stylesheet" href="{% static 'table/table.css' %}"> <!-- Link to external CSS -->
+</head>
+<body>
+    <h1>Puntajes</h1>
+    {% for header in headers %}
+        <input type="checkbox" id="checkbox_{{ forloop.counter }}" name="checkbox_{{ header }}" checked>
+        <label for="checkbox_{{ forloop.counter }}"> {{ header }} </label><br>
+    {% endfor %}
+    <table>
+        <thead>
+            <tr>
+                {% for header in headers %}
+                <th>
+                    <a href="#" data-sort="{{ header|slugify }}">{{ header }}</a>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="table-container">
+            {% include 'table_content.html' %}
+        </tbody>
+    </table>
+    
+    <form id="rows-form">
+        <label for="show">Rows per page: </label>
+        <input type="number" id="show" name="show" value="{{ show }}" min="1" required>
+        <button type="submit">Update</button>
+    </form>
+
+    <div id="pagination-container">
+        {% include 'pagination_content.html' %}
+    </div>
+
+    <script src="{% static 'table/table.js' %}"></script> 
+</body>
+</html>
