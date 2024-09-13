@@ -1,19 +1,25 @@
 import requests
 from bs4 import BeautifulSoup
 from people.models import Person
+import time
+import random
+
+ADDED_LEN = len(".html")
+START_INDEX = len("./A")
+HEADERS = {
+       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+   }
 
 def scrape_and_save(url):
     if Person.objects.filter(source_url = url).exists():
         return Person.objects.filter(source_url = url)
     
-    ADDED_LEN = len(".html")
     BASE_URL = url[:-ADDED_LEN]
-    START_INDEX = len("./A")
 
-    page = requests.get(url)
-    page.encoding = 'utf-8'  # Ensure encoding is set correctly
-
-    soup = BeautifulSoup(page.text, "html.parser")
+    soup = ""
+    with requests.get(url,headers= HEADERS,timeout=100) as response:
+        response.encoding = 'utf-8'
+        soup = BeautifulSoup(response.text, "html.parser")
 
     all_tds = soup.find_all("td", class_="text-center")
 
@@ -24,35 +30,35 @@ def scrape_and_save(url):
         for a in a_tags:
             curso_ref[a.get_text()] = a.get('href')
 
-    headers = []
+    data = []
 
-    for _, val in curso_ref.items():
+    queue = []
+    for val in curso_ref.values():
         results_url = f"{BASE_URL}{val[START_INDEX:]}"
-        results_page = requests.get(results_url)
-        results_page.encoding = 'utf-8'  # Ensure encoding is set correctly
-        in_soup = BeautifulSoup(results_page.text, "html.parser")
 
-        if not headers:
-            thead = in_soup.find("thead")
-            tr = thead.find("tr")
-            for th in tr.find_all("th"):
-                headers.append(th.text)
+        with requests.get(results_url,headers= HEADERS,timeout=100) as results_page:
+            results_page.encoding = 'utf-8'  
+            in_soup = BeautifulSoup(results_page.text, "html.parser")
 
-        tbody = in_soup.find("tbody")
-        trs = tbody.find_all("tr")
+            queue.append(in_soup.select("tbody tr"))
+
+    for trs in queue:
         for tr in trs:
             tds = tr.find_all("td")
             td_texts = [td.get_text() for td in tds]
+            td_texts.append(url)
+            data.append(td_texts)
 
-            person = Person.objects.create(
-                codigo = td_texts[0],
-                apellidos_y_nombres = td_texts[1],
-                carrera_primera_opcion = td_texts[2],
-                puntaje = td_texts[3],
-                merito = td_texts[4],
-                observacion = td_texts[5],
-                carrera_segunda_opcion = td_texts[6],
-                source_url = url
+    for d in data:
+        Person.objects.create(
+                codigo = d[0],
+                apellidos_y_nombres = d[1],
+                carrera_primera_opcion = d[2],
+                puntaje = d[3] if d[3] != '\xa0' else None,
+                merito = d[4] if d[4] != '\xa0' else None,
+                observacion = d[5] if d[5] != '\xa0' else "PRESENTE",
+                carrera_segunda_opcion = d[6] if d[6] != '\xa0' else None,
+                source_url = d[7]
             )
 
     return Person.objects.filter(source_url=url)
