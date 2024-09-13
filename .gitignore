@@ -1,6 +1,7 @@
 .venv
 __pycache__
-mysite/env.env
+DataScraping/.venv
+UNMSM_Scores/db.sqlite3
 .idx
 .vscode
 devserver.sh
