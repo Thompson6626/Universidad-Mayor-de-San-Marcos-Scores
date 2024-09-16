@@ -1,8 +1,14 @@
-.venv
+# ignore vendor static files
+src/staticfiles/vendors
+# ignore local static files
+local-cdn/
+
+.venv/
 __pycache__
 DataScraping/.venv
-UNMSM_Scores/db.sqlite3
+src/db.sqlite3
 .env
 .idx
 .vscode
 devserver.sh
+*.csv

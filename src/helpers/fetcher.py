@@ -5,6 +5,7 @@ import aiohttp
 import asyncio
 from urllib.parse import urljoin
 import os
+from typing import Dict
 
 SCHEMA = {
     "Codigo": pl.Int64,
@@ -22,8 +23,6 @@ REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
 }
 
-FILE_PATH = 'unmsm_results.csv'    
-
 def str_is_float(text:str)->bool:
     return text.replace('.','',1).isdigit()
 
@@ -39,25 +38,25 @@ async def fetch_html(session, url):
         return None
 
 
-async def main_scrape(date,url):
+async def main_scrape(date,url,out_path):
     async with aiohttp.ClientSession() as session:
         html = await fetch_html(session, url)
         if html is None:
-            return  # Returnif there was an error
+            return  # Return if there was an error
 
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(html, 'html.parser')
 
-        tbody = soup.find("tbody")
+        tbody = soup.find('tbody')
         a_tags = tbody.find_all('a')
 
         for a in a_tags:
             href = a.get('href')
             mod = a.get_text(strip=True)
             full_url = urljoin(url, href)
-            await scrape_and_save(session, full_url, date, mod)
+            await scrape_and_save(session, full_url, date, mod,out_path)
             
 # Main scraping function
-async def scrape_and_save(session,url,date,mod):
+async def scrape_and_save(session,url,date,mod,out_path):
     # Fetch the HTML of the initial URL
     html = await fetch_html(session, url)
     if html is None:
@@ -66,6 +65,7 @@ async def scrape_and_save(session,url,date,mod):
 
     # Find all <td> elements with the class "text-center" and extract the href attributes from <a> tags
     all_tds = soup.find_all("td", class_="text-center")
+    # 
     curso_ref = [a.get('href') for td in all_tds for a in td.find_all('a')]
 
     # Create tasks to fetch HTML content from the referenced URLs
@@ -112,20 +112,17 @@ async def scrape_and_save(session,url,date,mod):
             .otherwise(df["Observación"])
             .alias("Observación")
         )
-
-        mode = 'a' if os.path.exists(FILE_PATH) else 'w'
-        include = False if os.path.exists(FILE_PATH) else True
-        with open(FILE_PATH, mode) as f:
+        mode = 'a'
+        include = False
+        # If the file doesnt exist write and include the header
+        if not os.path.exists(out_path):
+            mode = 'w'
+            include = True
+        
+        with open(out_path, mode) as f:
             df.write_csv(f,include_header=include)
     
 
-UNMSM_URL_RESULTS = {
-    "2024-I": "https://admision.unmsm.edu.pe/Website20241/",
-    "2024-II": "https://admision.unmsm.edu.pe/Website20242/index.html",
-}
-
-async def main():
-    tasks = [main_scrape(date, url) for date, url in UNMSM_URL_RESULTS.items()]
+async def fetch_scores(unmsm_url_results: Dict[str, str],out_path: str) -> None:
+    tasks = [main_scrape(date, url,out_path) for date, url in unmsm_url_results.items()]
     await asyncio.gather(*tasks)
-
-asyncio.run(main())

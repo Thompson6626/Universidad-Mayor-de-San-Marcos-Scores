@@ -47,11 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # my apps
+    'commando',
     'people',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,6 +93,19 @@ DATABASES = {
     }
 }
 
+CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=30)
+#DATABASE_URL = config("DATABASE_URL", cast=str)
+DATABASE_URL = config("DATABASE_URL", default=None)
+
+if DATABASE_URL is not None:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=CONN_MAX_AGE,
+            conn_health_checks=True,
+            )
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -126,11 +141,28 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+STATICFILES_BASE_DIR = BASE_DIR / "staticfiles"
+STATICFILES_BASE_DIR.mkdir(exist_ok=True, parents=True)
+STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / "vendors"
 
+# Source for python manage.py collectstatic
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    STATICFILES_BASE_DIR
 ]
+# Output for python manage.py collectstatic
+STATIC_ROOT = BASE_DIR / "local-cdn"
+# < Django 4.2
+#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+CSV_SCORES_PATH = BASE_DIR / "unmsm_results.csv"
+
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

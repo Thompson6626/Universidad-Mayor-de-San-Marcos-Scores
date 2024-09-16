@@ -1,20 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Check</title>
-    <link rel="stylesheet" href="{% static 'home/home.css' %}"> 
-</head>
-<body>
-    <div class="container">
-        <h1>Enter URL to Check</h1>
-        {% csrf_token %}
-        <form method="post">
-            <input type="text" name="url" placeholder="Enter URL here" required>
-            <button type="submit">Check URL</button>
-        </form>
-    </div>
-</body>
-</html>
+{% extends 'base.html' %}
+
+
+{% block head_title %}{{ page_title }} - {{ block.super }}
+{% endblock head_title %}
+
+
+{% block content %}
+<h1>{{ page_title }}</h1>
+
+
+{% endblock content %}
