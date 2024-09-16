@@ -4,7 +4,7 @@ from django.conf import settings
 
 import asyncio
 
-from helpers import fetch_scores
+from helpers import fetch
 
 
 CSV_SCORES_PATH = getattr(settings, 'CSV_SCORES_PATH')
@@ -18,15 +18,16 @@ UNMSM_URL_RESULTS = {
 class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any):
-        asyncio.run(self.async_handle(*args, **options))
-
-    async def async_handle(self, *args: Any, **options: Any):
-        self.stdout.write("Fetching score data")
-        
-        # Await the async function to fetch and populate data
-        await fetch_scores(UNMSM_URL_RESULTS, CSV_SCORES_PATH)
-
-        self.stdout.write(
-                self.style.SUCCESS('Successfully fetched scores')
+        self.stdout.write("Fetching score data...")
+        try:
+            fetch(UNMSM_URL_RESULTS, CSV_SCORES_PATH)
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR('Failed to fetch scores')
             )
+            return
         
+        self.stdout.write(
+            self.style.SUCCESS('Scores successfully fetched')
+        )
+

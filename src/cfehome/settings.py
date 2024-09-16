@@ -155,7 +155,7 @@ STATIC_ROOT = BASE_DIR / "local-cdn"
 # < Django 4.2
 #STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-CSV_SCORES_PATH = BASE_DIR / "unmsm_results.csv"
+CSV_SCORES_PATH = BASE_DIR / "data" / "unmsm_results.csv"
 
 
 STORAGES = {

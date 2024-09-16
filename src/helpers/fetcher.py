@@ -1,11 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 import polars as pl
+from pathlib import Path
 import aiohttp
 import asyncio
 from urllib.parse import urljoin
 import os
 from typing import Dict
+import socket
 
 SCHEMA = {
     "Codigo": pl.Int64,
@@ -25,7 +27,6 @@ REQUEST_HEADERS = {
 
 def str_is_float(text:str)->bool:
     return text.replace('.','',1).isdigit()
-
 
 # Function to fetch HTML content asynchronously
 async def fetch_html(session, url):
@@ -118,11 +119,16 @@ async def scrape_and_save(session,url,date,mod,out_path):
         if not os.path.exists(out_path):
             mode = 'w'
             include = True
-        
+
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+
         with open(out_path, mode) as f:
             df.write_csv(f,include_header=include)
     
 
-async def fetch_scores(unmsm_url_results: Dict[str, str],out_path: str) -> None:
+async def fetch_scores(unmsm_url_results: Dict[str, str],out_path: Path) -> None:
     tasks = [main_scrape(date, url,out_path) for date, url in unmsm_url_results.items()]
     await asyncio.gather(*tasks)
+
+def fetch(unmsm_url_results: Dict[str, str],out_path: Path) -> None:
+    asyncio.run(fetch_scores(unmsm_url_results,out_path))
