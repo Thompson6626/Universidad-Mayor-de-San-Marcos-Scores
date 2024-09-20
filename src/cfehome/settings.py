@@ -26,6 +26,8 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DJANGO_DEBUG', cast = bool)
 
+API_KEY = config('API_KEY', cast=str)
+
 ALLOWED_HOSTS = [
     ".railway.app"
 ]
@@ -107,6 +109,8 @@ if DATABASE_URL is not None:
             )
     }
 
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -154,15 +158,17 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "local-cdn"
 # < Django 4.2
 #STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-CSV_SCORES_PATH = BASE_DIR / "data" / "unmsm_results.csv"
-
-
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+
+CSV_SCORES_PATH = BASE_DIR / "data" / "unmsm_results.csv"
+
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

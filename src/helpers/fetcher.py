@@ -1,4 +1,3 @@
-import requests
 from bs4 import BeautifulSoup
 import polars as pl
 from pathlib import Path
@@ -7,7 +6,6 @@ import asyncio
 from urllib.parse import urljoin
 import os
 from typing import Dict
-import socket
 
 SCHEMA = {
     "Codigo": pl.Int64,
@@ -94,7 +92,9 @@ async def scrape_and_save(session,url,date,mod,out_path):
                     cleaned_texts.append(None)
                 else:
                     cleaned_texts.append(text.strip())
-
+                    
+            while len(cleaned_texts) < len(SCHEMA.keys()) - 2:
+                cleaned_texts.append(None)
             # Create a dictionary for each row with headers and URL
             row_data = dict(zip(SCHEMA.keys() , cleaned_texts + [date,mod]))
 

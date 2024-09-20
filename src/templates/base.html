@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block head_title %}   {% endblock head_title %}</title>
+    <title>Puntajes</title>
     
     {% include 'base/css.html' %}
 </head>
-<body>
-    {% block content%}
+<body class="relative">
 
+    {% include 'chat.html' %}
+
+    {% block content %}
     {% endblock content %}
 
     {% include 'base/js.html' %}
+
+    
 </body>
 </html>

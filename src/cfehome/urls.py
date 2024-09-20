@@ -17,11 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .views import home_page_view,table_data_view,fetch_data
+from .views import home_page_view,transform_view
 
 urlpatterns = [
     path('', home_page_view, name = 'home_page'),
-    path('fetch',table_data_view,name = 'table_data'),
-    path('fetch_data/', fetch_data, name='fetch_data'),
+    path('toQu', transform_view ,name ='transform'),
     path('admin/', admin.site.urls),
 ]
