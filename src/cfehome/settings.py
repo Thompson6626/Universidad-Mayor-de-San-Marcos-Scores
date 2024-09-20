@@ -37,7 +37,8 @@ if DEBUG:
         "127.0.0.1",
         "localhost"
     ]
-
+    
+CSRF_TRUSTED_ORIGINS = ['https://8000-idx-mydjango-1722307501520.cluster-4xpux6pqdzhrktbhjf2cumyqtg.cloudworkstations.dev']
 
 # Application definition
 

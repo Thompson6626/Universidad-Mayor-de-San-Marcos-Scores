@@ -1,6 +1,6 @@
 <!-- Chat Text Button at the bottom left or top left -->
 <div id="chat-icon" class="fixed bottom-4 left-4 z-50 cursor-pointer">
-    <button id="chat-toggle" class="bg-blue-500 text-white p-2 rounded">Chat</button>
+    <button id="chat-toggle" class="bg-blue-500 text-white p-2 rounded">Pregunta a la ia</button>
 </div>
 
 <!-- Chat Popup -->
@@ -13,11 +13,12 @@
             <button id="close-chat" class="text-red-500">X</button>
         </div>
         <div class="p-4 h-full">
-            <textarea id="chat-input" class="w-full h-3/4 border rounded p-2" placeholder="Type your message..."></textarea>
-            <button id="send-message" class="w-full mt-2 bg-blue-500 text-white p-2 rounded">Send</button>
+            <textarea id="chat-input" class="w-full h-3/4 border rounded p-2" placeholder="Tu pregunta aca..."></textarea>
+            <button id="send-message" class="w-full mt-2 bg-blue-500 text-white p-2 rounded">Enviar</button>
         </div>
     </div>
 </div>
+
 
 {% csrf_token %}
 <script>
@@ -53,17 +54,35 @@
 
     document.getElementById('send-message').addEventListener('click', function() {
         const message = document.getElementById('chat-input').value;
-        // Encode the message to make it URL-safe
-        const encodedMessage = message;
-        
-        // Get the current URL search parameters
-        let searchParams = new URLSearchParams(window.location.search);
-        
-        // Set or update the 'q' parameter with the encoded message
-        searchParams.set('q', encodedMessage);
-        
-        // Redirect to the new URL with the updated query parameters
-        window.location.search = searchParams.toString();
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // Get CSRF token from the hidden input field
+
+        // Send the POST request using Fetch API
+        fetch('/toQu', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken // Include CSRF token in the headers
+            },
+            body: JSON.stringify({
+                message: message // Include the message in the body of the request
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text(); // Assuming the server returns the URL as a plain text string
+        })
+        .then(url => {
+            // Redirect to the URL returned by the server
+            window.location.href = url; // Redirect to the URL
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Handle error
+        });
     });
+
 </script>
+
 

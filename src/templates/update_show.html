@@ -1,0 +1,14 @@
+<div class="flex items-center mb-4">
+    <input type="number" id="rows-per-page" class="border rounded-lg px-4 py-2" min="1" value="{{ rows_per_page }}" />
+    <button id="update-rows" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg">Actualizar</button>
+</div>
+
+<script>
+    document.getElementById('update-rows').addEventListener('click', function() {
+        const rows = document.getElementById('rows-per-page').value;
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('show', rows);
+        // Redirect to the updated URL
+        window.location.href = currentUrl.toString();
+    });
+</script>

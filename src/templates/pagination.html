@@ -1,0 +1,36 @@
+<div class="flex flex-col items-center mt-4">
+    <div class="flex space-x-4 mb-2">
+        <!-- First Button -->
+        {% if people_page.has_previous %}
+        <a href="?page=1&show={{ rows_per_page }}{% if query %}&q={{ query }}{% endif %}" class="text-blue-500 hover:underline px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-200">First</a>
+        {% else %}
+        <span class="text-gray-500 px-4 py-2 border rounded-lg bg-gray-100">First</span>
+        {% endif %}
+
+        <!-- Previous Button -->
+        {% if people_page.has_previous %}
+        <a href="?page={{ people_page.previous_page_number }}&show={{ rows_per_page }}{% if query %}&q={{ query }}{% endif %}" class="text-blue-500 hover:underline px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-200">Previous</a>
+        {% else %}
+        <span class="text-gray-500 px-4 py-2 border rounded-lg bg-gray-100">Previous</span>
+        {% endif %}
+            <!-- Page Info -->
+        <div class="text-gray-700 py-2">
+            Page {{ people_page.number }} of {{ people_page.paginator.num_pages }}
+        </div>
+        <!-- Next Button -->
+        {% if people_page.has_next %}
+        <a href="?page={{ people_page.next_page_number }}&show={{ rows_per_page }}{% if query %}&q={{ query }}{% endif %}" class="text-blue-500 hover:underline px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-200">Next</a>
+        {% else %}
+        <span class="text-gray-500 px-4 py-2 border rounded-lg bg-gray-100">Next</span>
+        {% endif %}
+
+        <!-- Last Button -->
+        {% if people_page.has_next %}
+        <a href="?page={{ people_page.paginator.num_pages }}&show={{ rows_per_page }}{% if query %}&q={{ query }}{% endif %}" class="text-blue-500 hover:underline px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-200">Last</a>
+        {% else %}
+        <span class="text-gray-500 px-4 py-2 border rounded-lg bg-gray-100">Last</span>
+        {% endif %}
+    </div>
+    <a href="?" class="inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition duration-200">Inicio</a>
+</div>
+

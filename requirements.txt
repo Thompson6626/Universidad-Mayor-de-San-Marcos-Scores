@@ -3,7 +3,7 @@ pip
 autopep8
 
 # App
-Django>=5.0,<5.1
+Django>=5.1,<5.2
 polars
 python-decouple>=3.8
 asgiref==3.7.2
