@@ -58,7 +58,7 @@ def transform_view(request):
         question = data.get('message')
 
         query = transformQuestion(question)
-        url = reverse('home_page')  # Get the URL of the 'new_page' view
+        url = reverse('home_page') 
 
         query_params = f'?q={query}'
         return HttpResponse(f'{url}{query_params}')

@@ -3,33 +3,50 @@
 {% block content %}
 
 {% if people_page %}
-    <div class="flex justify-center w-full overflow-x-auto">
-        <div class="w-full max-w-6xl">
-            <table class="min-w-full table-fixed text-left text-sm font-light mt-4 border-separate border-spacing-2">
-                <thead class="bg-gray-100 text-gray-600">
-                    <tr>
-                        {% for header in headers %}
-                        <th class="px-6 py-3 border-b-2 border-gray-300 font-semibold">{{ header }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    {% for person in people_page %}
-                    <tr class="hover:bg-gray-50 transition-colors duration-200">
-                        {% for _, value in person.items %}
-                        <td class="px-6 py-4 border-b border-gray-300 break-words">{{ value }}</td>
-                        {% endfor %}
-                    </tr>
+<div class="flex justify-center w-full overflow-x-auto">
+    <div class="w-full max-w-6xl">
+        <table class="min-w-full table-fixed text-left text-sm mt-4">
+            <thead class="bg-gray-100 text-gray-600">
+                <tr>
+                    {% for header in headers %}
+                    <th class="px-6 py-3 border-b-2 border-gray-300 font-semibold">{{ header }}</th>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-300">
+                {% for person in people_page %}
+                <tr class="hover:bg-gray-50 transition-colors duration-200">
+                    {% for _, value in person.items %}
+                    <td class="px-6 py-4 border-b border-gray-300 break-words text-gray-800">{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
+
 
     {% include 'pagination.html' %}
 
 {% else %}
     <h1 class="mt-4 text-center text-lg font-semibold text-gray-500">No data available</h1>
 {% endif %}
+<style>
+    table {
+        border: 1px solid #e2e8f0; /* Add outer border to the table */
+    }
 
+    th {
+        border-bottom: 2px solid #cbd5e0; /* Darker bottom border for headers */
+    }
+
+    td {
+        border-bottom: 1px solid #e2e8f0; /* Lighter bottom border for rows */
+    }
+
+    tr:nth-child(even) {
+        background-color: #bfd6e6; /* Light gray background for even rows */
+    }
+</style>
 {% endblock content %}

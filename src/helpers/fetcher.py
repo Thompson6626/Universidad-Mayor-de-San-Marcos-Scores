@@ -100,19 +100,27 @@ async def scrape_and_save(session,url,date,mod,out_path):
 
             if row_data["Puntaje"] is not None and not str_is_float(row_data["Puntaje"]):
                 continue  
+
+            if row_data["Carrera Primera Opción"] is not None and '-' in row_data["Carrera Primera Opción"]:
+                row_data["Carrera Primera Opción"] = row_data["Carrera Primera Opción"].split('-')[0]
+            if row_data["Carrera Segunda Opción"] is not None and '-' in row_data["Carrera Segunda Opción"]:
+                row_data["Carrera Segunda Opción"] = row_data["Carrera Segunda Opción"].split('-')[0]
+            
             data.append(row_data)
 
     df = pl.DataFrame(data,schema=SCHEMA)
     
     if not df.is_empty():
+        # Delete rows with all null values
         df = df.filter(~pl.all_horizontal(pl.all().is_null()))
-
+        # Change the observacion column
         df = df.with_columns(
             pl.when(df["Observación"] == "ALCANZO VACANTE")
             .then(pl.lit("ALCANZO VACANTE PRIMERA OPCIÓN"))
             .otherwise(df["Observación"])
             .alias("Observación")
         )
+
         mode = 'a'
         include = False
         # If the file doesnt exist write and include the header

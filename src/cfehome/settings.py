@@ -38,7 +38,6 @@ if DEBUG:
         "localhost"
     ]
     
-CSRF_TRUSTED_ORIGINS = ['https://8000-idx-mydjango-1722307501520.cluster-4xpux6pqdzhrktbhjf2cumyqtg.cloudworkstations.dev']
 
 # Application definition
 
@@ -100,6 +99,7 @@ CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=30)
 #DATABASE_URL = config("DATABASE_URL", cast=str)
 DATABASE_URL = config("DATABASE_URL", default=None)
 
+# For another database, use the following
 if DATABASE_URL is not None:
     import dj_database_url
     DATABASES = {

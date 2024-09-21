@@ -39,7 +39,7 @@ class Command(BaseCommand):
         try:
             fetch(UNMSM_URL_RESULTS, CSV_SCORES_PATH)
         except Exception as e:
-            self.stdout.write(self.style.ERROR('Failed to fetch scores'))
+            self.stdout.write(self.style.ERROR(f'Failed to fetch scores: {e}'))
         else:
             self.stdout.write(self.style.SUCCESS('Scores successfully fetched'))
 
