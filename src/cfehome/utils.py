@@ -37,8 +37,8 @@ def transformQuestion(question):
         Quiero ver todo con puntaje por encima de 500.
         Here you would include the puntaje column,
     16. The columns must also be in the same order as the django schema (top to bottom) if they are not specified in the question.
-
-
+    17. Theres is no accentuation in any column names.
+    18. Make sure there's correct spacing in the SQL you're about to return.
     Django schema:
         codigo = models.CharField(max_length=255)
         apellidos_y_nombres = models.CharField(max_length=255)

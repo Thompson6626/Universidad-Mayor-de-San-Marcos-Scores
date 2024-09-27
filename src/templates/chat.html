@@ -10,7 +10,7 @@
     <div id="chat-popup" class="fixed bottom-0 left-0 bg-white shadow-lg rounded-lg w-full max-w-xs h-70 z-50 transition-transform transform translate-y-full">
         <div class="flex items-center justify-between p-2 border-b">
             <h2 class="text-lg font-bold">Chat</h2>
-            <button id="close-chat" class="text-red-500">X</button>
+            <button id="close-chat" class="text-red-500 font-bold">X</button>
         </div>
         <div class="p-4 h-full">
             <textarea id="chat-input" class="w-full h-3/4 border rounded p-2" placeholder="Tu pregunta aca..."></textarea>
@@ -80,9 +80,12 @@
             return response.text(); // Assuming the server returns the URL as a plain text string
         })
         .then(url => {
-            console.log(url);
-            // Redirect to the URL returned by the server
-            window.location.href = url; // Redirect to the URL
+            if(url === "ERROR"){
+                alert("No se pudo realizar la consulta.");
+            }else{
+                // Redirect to the URL returned by the server
+                window.location.href = url; // Redirect to the URL
+            }
         })
         .catch((error) => {
             console.error('Error:', error);

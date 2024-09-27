@@ -58,12 +58,13 @@ def transform_view(request):
         question = data.get('message')
 
         query = transformQuestion(question)
+
+        if query == 'ERROR':
+            return HttpResponse("ERROR")
+
         url = reverse('home_page') 
 
         query_params = f'?q={query}'
         return HttpResponse(f'{url}{query_params}')
 
     return JsonResponse({'status': 'fail', 'message': 'Invalid request'}, status=400)
-
-
-

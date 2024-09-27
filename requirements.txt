@@ -6,9 +6,9 @@ autopep8
 Django>=5.1,<5.2
 polars
 python-decouple
-asgiref
-sqlparse
-typing_extensions
+#asgiref
+#sqlparse
+#typing_extensions
 gunicorn
 aiohttp
 requests

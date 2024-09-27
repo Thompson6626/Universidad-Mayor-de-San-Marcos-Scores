@@ -29,7 +29,9 @@ DEBUG = config('DJANGO_DEBUG', cast = bool)
 API_KEY = config('API_KEY', cast=str)
 
 ALLOWED_HOSTS = [
-    ".railway.app"
+    ".railway.app",
+    "127.0.0.1",
+    "localhost"
 ]
 
 if DEBUG:
